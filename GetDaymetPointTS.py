@@ -43,11 +43,13 @@ ds = xr.open_dataset(Daymet_file)
 
 dsloc = ds.sel(x=xi, y=yi, method='nearest')
 
-dsloc['tmax'].plot()
-
 Tmax = dsloc['tmax'].values
 time = dsloc['time'].values
 
 plt.figure(figsize=(16,10))
 plt.plot(time, Tmax)
+plt.title('Daily Maximum Air Temperature at Wyoming Big Sage Site from Daymet')
+plt.xlabel('Time')
+plt.ylabel('$T_{max} {}^{\circ}C$')
 plt.show()
+
