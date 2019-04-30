@@ -11,7 +11,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from osgeo import ogr
 from osgeo import osr
-from scipy import interp
+import scipy.interpolate
 
 Daymet_path = '/Users/lejoflores/data/daymet/'
 Daymet_name = 'tmax_1980-2018.nc'
@@ -42,6 +42,8 @@ xi = Point.GetX()
 ds = xr.open_dataset(Daymet_file)
 
 dsloc = ds.sel(x=xi, y=yi, method='nearest')
+
+
 
 Tmax = dsloc['tmax'].values
 time = dsloc['time'].values
