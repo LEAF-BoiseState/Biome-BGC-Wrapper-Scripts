@@ -11,34 +11,39 @@ def main(clargs):
 	DaymetInfo = GetCommandLineArgs(clargs)
 
 	# Convert lat/long coord to LCC x,y
-	xi, yi = TransformLatLongPoint(DaymetInfo['LonPoint'],DaymetInfo['LonPoint'])
+	xi, yi = TransformLatLongPoint(DaymetInfo['LonPoint'],DaymetInfo['LatPoint'])
 
 	# Get precip
 	time_prcp, prcp = GetPointTimeseries(DaymetInfo['ReadPath'],DaymetInfo['PrcpFile'],'prcp',xi,yi)
 
-	# Get tmax
-	time_tmax, tmax = GetPointTimeseries(DaymetInfo['ReadPath'],DaymetInfo['TmaxFile'],'tmax',xi,yi)
+	#GetPointTimeseries(DaymetInfo['ReadPath'],DaymetInfo['PrcpFile'],'prcp',xi,yi)
 
-	# Get tmin
-	time_tmin, tmin = GetPointTimeseries(DaymetInfo['ReadPath'],DaymetInfo['TminFile'],'tmin',xi,yi)
+	# # Get tmax
+	# time_tmax, tmax = GetPointTimeseries(DaymetInfo['ReadPath'],DaymetInfo['TmaxFile'],'tmax',xi,yi)
 
-	# Get srad
-	time_srad, srad = GetPointTimeseries(DaymetInfo['ReadPath'],DaymetInfo['SradFile'],'srad',xi,yi)
+	# # Get tmin
+	# time_tmin, tmin = GetPointTimeseries(DaymetInfo['ReadPath'],DaymetInfo['TminFile'],'tmin',xi,yi)
 
-	# Get dayl
-	time_dayl, dayl = GetPointTimeseries(DaymetInfo['ReadPath'],DaymetInfo['DaylFile'],'dayl',xi,yi)
+	# # Get srad
+	# time_srad, srad = GetPointTimeseries(DaymetInfo['ReadPath'],DaymetInfo['SradFile'],'srad',xi,yi)
 
-	# Get vp
-	time_vp, vp     = GetPointTimeseries(DaymetInfo['ReadPath'],DaymetInfo['VPFile'],'vp',xi,yi)
+	# # Get dayl
+	# time_dayl, dayl = GetPointTimeseries(DaymetInfo['ReadPath'],DaymetInfo['DaylFile'],'dayl',xi,yi)
 
-	# Concatenate and write to ouput
-	DaymetDataPoint = {'prcp': prcp, 'tmax': tmax, 'tmin': tmin, 'srad': srad, 'dayl': dayl, 'vp': vp }
-	DaymetTimePoint = {'time_prcp': time_prcp, 'time_tmax': time_tmax, 'time_tmin': time_tmin, \
-		'time_srad': time_srad, 'time_dayl': time_dayl, 'time_vp': time_vp }
+	# # Get vp
+	# time_vp, vp     = GetPointTimeseries(DaymetInfo['ReadPath'],DaymetInfo['VPFile'],'vp',xi,yi)
+
+	# # Concatenate and write to ouput
+	# DaymetDataPoint = {'prcp': prcp, 'tmax': tmax, 'tmin': tmin, 'srad': srad, 'dayl': dayl, 'vp': vp }
+	# DaymetTimePoint = {'time_prcp': time_prcp, 'time_tmax': time_tmax, 'time_tmin': time_tmin, \
+	# 	'time_srad': time_srad, 'time_dayl': time_dayl, 'time_vp': time_vp }
+	# WriteBGCForcing()
+
+	return;
 
 def GetCommandLineArgs(clargs):
 
-	if(len(clargs)!=11):
+	if(len(clargs)!=12):
 		print("\nUSAGE: "+clargs[0]+" <Daymet Path> <prcp file name>")
 		print("\t<tmax file name> <tmin file name> <srad file name>")
 		print("\t<dayl file name> <vp file name> <write path> <write file>")
@@ -109,6 +114,21 @@ def GetPointTimeseries(ReadPath,ReadFile,keyVarString,xi,yi):
 
 	return time, Vari;
 
+	# print("ReadPath     = " + ReadPath)
+	# print("ReadFile     = " + ReadFile)
+	# print("keyVarString = " + keyVarString)
+	# print("LonPoint     = " + str(xi))
+	# print("LatPoint     = " + str(yi))
+	
+
+# def WriteBGCForcing(WritePath,ReadPath,DaymetTimePoint,DaymetDataPoint):
+
+
+
+# 	return;
+
+
 if __name__ == '__main__':
     main(sys.argv)
+    print("Writing of BGC forcing file complete...\n")
 
