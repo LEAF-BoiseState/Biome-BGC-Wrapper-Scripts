@@ -8,47 +8,71 @@ from osgeo import osr
 def main(clargs):
 
 	# Get command line arguments and verify
-	GetCommandLineArgs(clargs)
+	DaymetInfo = GetCommandLineArgs(clargs)
 
 	# Convert lat/long coord to LCC x,y
-	xi, yi = TransformLatLongPoint()
+	xi, yi = TransformLatLongPoint(DaymetInfo['LonPoint'],DaymetInfo['LonPoint'])
 
 	# Get precip
-	GetPointTimeseries(ReadPath,ReadFile,'prcp',xi,yi)
-
-	# Get tmin
+	time_prcp, prcp = GetPointTimeseries(DaymetInfo['ReadPath'],DaymetInfo['PrcpFile'],'prcp',xi,yi)
 
 	# Get tmax
+	time_tmax, tmax = GetPointTimeseries(DaymetInfo['ReadPath'],DaymetInfo['TmaxFile'],'tmax',xi,yi)
+
+	# Get tmin
+	time_tmin, tmin = GetPointTimeseries(DaymetInfo['ReadPath'],DaymetInfo['TminFile'],'tmin',xi,yi)
 
 	# Get srad
-
-	# Get vp
+	time_srad, srad = GetPointTimeseries(DaymetInfo['ReadPath'],DaymetInfo['SradFile'],'srad',xi,yi)
 
 	# Get dayl
+	time_dayl, dayl = GetPointTimeseries(DaymetInfo['ReadPath'],DaymetInfo['DaylFile'],'dayl',xi,yi)
+
+	# Get vp
+	time_vp, vp     = GetPointTimeseries(DaymetInfo['ReadPath'],DaymetInfo['VPFile'],'vp',xi,yi)
 
 	# Concatenate and write to ouput
-
-
+	DaymetDataPoint = {'prcp': prcp, 'tmax': tmax, 'tmin': tmin, 'srad': srad, 'dayl': dayl, 'vp': vp }
+	DaymetTimePoint = {'time_prcp': time_prcp, 'time_tmax': time_tmax, 'time_tmin': time_tmin, \
+		'time_srad': time_srad, 'time_dayl': time_dayl, 'time_vp': time_vp }
 
 def GetCommandLineArgs(clargs):
 
-	if(len(sys.argv)!=11):
-		print("Usage: "+sys.argv[0]+" <Daymet Path> <>")
+	if(len(clargs)!=11):
+		print("\nUSAGE: "+clargs[0]+" <Daymet Path> <prcp file name>")
+		print("\t<tmax file name> <tmin file name> <srad file name>")
+		print("\t<dayl file name> <vp file name> <write path> <write file>")
+		print("\t<point lat> <point lon>\n")
+		print("<prcp file name> = Daymet precipitation netCDF file name")
+		print("<tmax file name> = Daymet maximum temperature netCDF file name")
+		print("<tmin file name> = Daymet minimum temperature netCDF file name")
+		print("<srad file name> = Daymet solar radiation netCDF file name")
+		print("<dayl file name> = Daymet day length netCDF file name")
+		print("<vp file name>   = Daymet vapor pressure netCDF file name")
+		print("<write path>     = Output file write path")
+		print("<write file>     = Output file write name")
+		print("<point lat>      = Latitude of point to interpolate to")
+		print("<point lon>      = Longitude of point to interpolate to\n")
+		print("Exiting...\n")
+		exit(1)
 
-	ReadPath  = sys.argv[1]
-	PrcpFile  = sys.argv[2]
-	TmaxFile  = sys.argv[3]
-	TminFile  = sys.argv[4]
-	SradFile  = sys.argv[5]
-	VPFile    = sys.argv[6]
 
-	WritePath = sys.argv[7]
-	WriteFile = sys.argv[8]
+	ReadPath  = clargs[1]
+	PrcpFile  = clargs[2]
+	TmaxFile  = clargs[3]
+	TminFile  = clargs[4]
+	SradFile  = clargs[5]
+	DaylFile  = clargs[6]
+	VPFile    = clargs[7]
+	WritePath = clargs[8]
+	WriteFile = clargs[9]
 
-	LatPoint  = float(sys.argv[9])
-	LonPoint  = float(sys.argv[10])
+	LatPoint  = float(clargs[10])
+	LonPoint  = float(clargs[11])
 
-	return;
+	return {'ReadPath': ReadPath, 'PrcpFile': PrcpFile, 'TmaxFile': TmaxFile, \
+		'TminFile': TminFile, 'SradFile': SradFile, 'DaylFile': DaylFile, \
+		'VPFile': VPFile, 'LatPoint': LatPoint, 'LonPoint': LonPoint};
 
 def TransformLatLongPoint(LonPoint,LatPoint):
 	InSR = osr.SpatialReference()
@@ -83,6 +107,7 @@ def GetPointTimeseries(ReadPath,ReadFile,keyVarString,xi,yi):
 	Vari = dsloc[keyVarString].values
 	time = dsloc['time'].values
 
+	return time, Vari;
 
 if __name__ == '__main__':
     main(sys.argv)
