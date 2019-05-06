@@ -4,7 +4,11 @@ import numpy as np
 from osgeo import ogr
 from osgeo import osr
 
-
+#==================================================================================#
+#                                                                                  #
+##
+#                                                                                  #
+#==================================================================================#
 def main(clargs):
 
 	# Get command line arguments and verify
@@ -13,34 +17,39 @@ def main(clargs):
 	# Convert lat/long coord to LCC x,y
 	xi, yi = TransformLatLongPoint(DaymetInfo['LonPoint'],DaymetInfo['LatPoint'])
 
+	# This part could be parallelized:
+
 	# Get precip
 	time_prcp, prcp = GetPointTimeseries(DaymetInfo['ReadPath'],DaymetInfo['PrcpFile'],'prcp',xi,yi)
 
-	#GetPointTimeseries(DaymetInfo['ReadPath'],DaymetInfo['PrcpFile'],'prcp',xi,yi)
+	# Get tmax
+	time_tmax, tmax = GetPointTimeseries(DaymetInfo['ReadPath'],DaymetInfo['TmaxFile'],'tmax',xi,yi)
 
-	# # Get tmax
-	# time_tmax, tmax = GetPointTimeseries(DaymetInfo['ReadPath'],DaymetInfo['TmaxFile'],'tmax',xi,yi)
+	# Get tmin
+	time_tmin, tmin = GetPointTimeseries(DaymetInfo['ReadPath'],DaymetInfo['TminFile'],'tmin',xi,yi)
 
-	# # Get tmin
-	# time_tmin, tmin = GetPointTimeseries(DaymetInfo['ReadPath'],DaymetInfo['TminFile'],'tmin',xi,yi)
+	# Get srad
+	time_srad, srad = GetPointTimeseries(DaymetInfo['ReadPath'],DaymetInfo['SradFile'],'srad',xi,yi)
 
-	# # Get srad
-	# time_srad, srad = GetPointTimeseries(DaymetInfo['ReadPath'],DaymetInfo['SradFile'],'srad',xi,yi)
+	# Get dayl
+	time_dayl, dayl = GetPointTimeseries(DaymetInfo['ReadPath'],DaymetInfo['DaylFile'],'dayl',xi,yi)
 
-	# # Get dayl
-	# time_dayl, dayl = GetPointTimeseries(DaymetInfo['ReadPath'],DaymetInfo['DaylFile'],'dayl',xi,yi)
+	# Get vp
+	time_vp, vp     = GetPointTimeseries(DaymetInfo['ReadPath'],DaymetInfo['VPFile'],'vp',xi,yi)
 
-	# # Get vp
-	# time_vp, vp     = GetPointTimeseries(DaymetInfo['ReadPath'],DaymetInfo['VPFile'],'vp',xi,yi)
-
-	# # Concatenate and write to ouput
-	# DaymetDataPoint = {'prcp': prcp, 'tmax': tmax, 'tmin': tmin, 'srad': srad, 'dayl': dayl, 'vp': vp }
-	# DaymetTimePoint = {'time_prcp': time_prcp, 'time_tmax': time_tmax, 'time_tmin': time_tmin, \
-	# 	'time_srad': time_srad, 'time_dayl': time_dayl, 'time_vp': time_vp }
-	# WriteBGCForcing()
+	# Concatenate and write to ouput
+	DaymetDataPoint = {'prcp': prcp, 'tmax': tmax, 'tmin': tmin, 'srad': srad, 'dayl': dayl, 'vp': vp }
+	DaymetTimePoint = {'time_prcp': time_prcp, 'time_tmax': time_tmax, 'time_tmin': time_tmin, \
+		'time_srad': time_srad, 'time_dayl': time_dayl, 'time_vp': time_vp }
+	# WriteBGCForcing(DaymetInfo['WritePath'],DaymetInfo['WriteFile'],DaymetTimePoint,DaymetDataPoint)
 
 	return;
 
+#==================================================================================#
+#                                                                                  #
+##
+#                                                                                  #
+#==================================================================================#
 def GetCommandLineArgs(clargs):
 
 	if(len(clargs)!=12):
@@ -77,8 +86,14 @@ def GetCommandLineArgs(clargs):
 
 	return {'ReadPath': ReadPath, 'PrcpFile': PrcpFile, 'TmaxFile': TmaxFile, \
 		'TminFile': TminFile, 'SradFile': SradFile, 'DaylFile': DaylFile, \
-		'VPFile': VPFile, 'LatPoint': LatPoint, 'LonPoint': LonPoint};
+		'VPFile': VPFile, 'WritePath': WritePath, 'WriteFile': WriteFile, \
+		'LatPoint': LatPoint, 'LonPoint': LonPoint};
 
+#==================================================================================#
+#                                                                                  #
+##
+#                                                                                  #
+#==================================================================================#
 def TransformLatLongPoint(LonPoint,LatPoint):
 	InSR = osr.SpatialReference()
 	InSR.ImportFromEPSG(4326) # WGS84/Geographic
@@ -101,7 +116,11 @@ def TransformLatLongPoint(LonPoint,LatPoint):
 	xi = Point.GetX()
 
 	return xi, yi;
-
+#==================================================================================#
+#                                                                                  #
+##
+#                                                                                  #
+#==================================================================================#
 def GetPointTimeseries(ReadPath,ReadFile,keyVarString,xi,yi):
 
 	Daymet_file = ReadPath+ReadFile
@@ -119,16 +138,55 @@ def GetPointTimeseries(ReadPath,ReadFile,keyVarString,xi,yi):
 	# print("keyVarString = " + keyVarString)
 	# print("LonPoint     = " + str(xi))
 	# print("LatPoint     = " + str(yi))
-	
+#==================================================================================#
+#                                                                                  #
+##
+#                                                                                  #
+#==================================================================================#
+def WriteBGCForcing(WritePath,WriteFile,DaymetTimePoint,DaymetDataPoint):
 
-# def WriteBGCForcing(WritePath,ReadPath,DaymetTimePoint,DaymetDataPoint):
+	header1 = '{:>6}'.format('year') + \
+			  '{:>6}'.format('yday') + \
+              '{:>8}'.format('Tmax') + \
+              '{:>8}'.format('Tmin') + \
+              '{:>8}'.format('Tday') + \
+              '{:>8}'.format('prcp') + \
+              '{:>9}'.format('VPD') + \
+              '{:>9}'.format('srad') + \
+              '{:>8}'.format('daylen\n')
+
+	header2 = '{:>6}'.format('') + \
+			  '{:>6}'.format('') + \
+              '{:>8}'.format('(deg C)') + \
+              '{:>8}'.format('(deg C)') + \
+              '{:>8}'.format('(deg C)') + \
+              '{:>8}'.format('(cm)') + \
+              '{:>9}'.format('(Pa)') + \
+              '{:>9}'.format('(W m-2)') + \
+              '{:>8}'.format('(s)\n')
+              
+    pntfmt = ['%6d','%6d','%8.2f','%8.2f','%8.2f','%8.2f','%9.2f','%9.2f','%8d']
+
+	tmax = DaymetDataPoint['tmax']
+    tmin = DaymetDataPoint['tmin']
 
 
+    ## Need to extract year and jday
 
-# 	return;
+    OutArray = np.concatenate((year,jday,DaymetDataPoint['tmax'],DaymetDataPoint['tmin'],\
+    	((DaymetDataPoint['tmax']+DaymetDataPoint['tmin'])/2),DaymetDataPoint['prcp'],\
+    	DaymetDataPoint['vp'],DaymetDataPoint['srad'],DaymetDataPoint['dayl']),axis=1)
 
+	np.savetxt(WritePath+WriteFile,OutArray,fmt=pntfmt,header=header1+header2)
 
+	return;
+#==================================================================================#
+#                                                                                  #
+##
+#                                                                                  #
+#==================================================================================#
 if __name__ == '__main__':
+
     main(sys.argv)
     print("Writing of BGC forcing file complete...\n")
 
