@@ -155,7 +155,7 @@ def WriteBGCForcing(WritePath,WriteFile,DaymetTimePoint,DaymetDataPoint):
               '{:>8}'.format('prcp') + \
               '{:>9}'.format('VPD') + \
               '{:>9}'.format('srad') + \
-              '{:>8}'.format('daylen\n')
+              '{:>8}'.format('daylen') + '\n'
 
 	header2 = '{:>6}'.format('') + \
 			  '{:>6}'.format('') + \
@@ -165,20 +165,22 @@ def WriteBGCForcing(WritePath,WriteFile,DaymetTimePoint,DaymetDataPoint):
               '{:>8}'.format('(cm)') + \
               '{:>9}'.format('(Pa)') + \
               '{:>9}'.format('(W m-2)') + \
-              '{:>8}'.format('(s)\n')
+              '{:>8}'.format('(s)')
               
-    pntfmt = ['%6d','%6d','%8.2f','%8.2f','%8.2f','%8.2f','%9.2f','%9.2f','%8d']
+	pntfmt = ['%6d','%6d','%8.2f','%8.2f','%8.2f','%8.2f','%9.2f','%9.2f','%8d']
 
     # Extract year and day of year
-    time2 = pd.to_datetime(DaymetTimePoint['time_prcp'])
-    year  = time2.year
-    yday  = time2.dayofyear
+	time2 = pd.to_datetime(DaymetTimePoint['time_prcp'])
+	year  = time2.year
+	yday  = time2.dayofyear
 
-    OutArray = np.concatenate((year,jday,DaymetDataPoint['tmax'],DaymetDataPoint['tmin'],\
+	print(DaymetDataPoint['tmax'].shape)
+
+	OutArray = np.column_stack((year,yday,DaymetDataPoint['tmax'],DaymetDataPoint['tmin'],\
     	((DaymetDataPoint['tmax']+DaymetDataPoint['tmin'])/2),DaymetDataPoint['prcp'],\
-    	DaymetDataPoint['vp'],DaymetDataPoint['srad'],DaymetDataPoint['dayl']),axis=1)
+    	DaymetDataPoint['vp'],DaymetDataPoint['srad'],DaymetDataPoint['dayl']))
 
-	np.savetxt(WritePath+WriteFile,OutArray,fmt=pntfmt,header=header1+header2)
+	np.savetxt(WritePath+WriteFile,OutArray,fmt=pntfmt,header=header1+header2,comments='',delimiter='')
 
 	return;
 #==================================================================================#
