@@ -1,6 +1,7 @@
 import sys
 import xarray as xr
 import numpy as np
+import pandas as pd
 from osgeo import ogr
 from osgeo import osr
 
@@ -41,7 +42,8 @@ def main(clargs):
 	DaymetDataPoint = {'prcp': prcp, 'tmax': tmax, 'tmin': tmin, 'srad': srad, 'dayl': dayl, 'vp': vp }
 	DaymetTimePoint = {'time_prcp': time_prcp, 'time_tmax': time_tmax, 'time_tmin': time_tmin, \
 		'time_srad': time_srad, 'time_dayl': time_dayl, 'time_vp': time_vp }
-	# WriteBGCForcing(DaymetInfo['WritePath'],DaymetInfo['WriteFile'],DaymetTimePoint,DaymetDataPoint)
+	
+	WriteBGCForcing(DaymetInfo['WritePath'],DaymetInfo['WriteFile'],DaymetTimePoint,DaymetDataPoint)
 
 	return;
 
@@ -167,11 +169,10 @@ def WriteBGCForcing(WritePath,WriteFile,DaymetTimePoint,DaymetDataPoint):
               
     pntfmt = ['%6d','%6d','%8.2f','%8.2f','%8.2f','%8.2f','%9.2f','%9.2f','%8d']
 
-	tmax = DaymetDataPoint['tmax']
-    tmin = DaymetDataPoint['tmin']
-
-
-    ## Need to extract year and jday
+    # Extract year and day of year
+    time2 = pd.to_datetime(DaymetTimePoint['time_prcp'])
+    year  = time2.year
+    yday  = time2.dayofyear
 
     OutArray = np.concatenate((year,jday,DaymetDataPoint['tmax'],DaymetDataPoint['tmin'],\
     	((DaymetDataPoint['tmax']+DaymetDataPoint['tmin'])/2),DaymetDataPoint['prcp'],\
