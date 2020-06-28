@@ -1,0 +1,3 @@
+[submodule "Biome-BGC"]
+	path = Biome-BGC
+	url = https://github.com/bpbond/Biome-BGC.git
