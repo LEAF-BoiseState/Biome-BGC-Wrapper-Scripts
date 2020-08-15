@@ -1,6 +1,0 @@
-CLIM_CHANGE   (keyword - do not remove)
-keyOffsetTmax           (deg C)   offset for Tmax
-keyOffsetTmin           (deg C)   offset for Tmin
-keyMultPrcp           (DIM)     multiplier for Prcp
-keyMultVPD           (DIM)     multiplier for VPD
-keyMultSWR           (DIM)     multiplier for shortwave radiation

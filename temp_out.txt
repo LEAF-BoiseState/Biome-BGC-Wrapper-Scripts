@@ -1,6 +1,0 @@
-CLIM_CHANGE   (keyword - do not remove)
-0.0           (deg C)   offset for Tmax
-0.0           (deg C)   offset for Tmin
-1.0           (DIM)     multiplier for Prcp
-1.0           (DIM)     multiplier for VPD
-1.0           (DIM)     multiplier for shortwave radiation
