@@ -1,24 +1,36 @@
 
 
 rcczo_metdata:
-	rcmetpath: '../../data/rcczo_daily_climatefields/'
-	tmaxbase: 'ta_max_wy'
-	tminbase: 'ta_min_wy'
-	tmeanbase: 'ta_mean_wy'
-	prcpbase: 'precip_sum_wy'
-	rhbase: 'rh_mean_wy'
-	sradbase: 'cloud_solar_mean_wy'
+    rcmetpath: '../../data/rcczo_daily_climatefields/'
+    tmaxbase: 'ta_max_wy'
+    tminbase: 'ta_min_wy'
+    tmeanbase: 'ta_mean_wy'
+    prcpbase: 'precip_sum_wy'
+    rhbase: 'rh_mean_wy'
+    sradbase: 'cloud_solar_mean_wy'
 
 bgcsim_dates:
-	start_date: '2005-01-01'
-	end_date: '2007-12-31'
+    start_date: '2005-01-01'
+    end_date: '2007-12-31'
 
 bgcsim_points:
-	x_rcczo_pt: 520468.128677634
-	y_rcczo_pt: 4768006.21823093
+    x_rcczo_pt: 520468.128677634
+    y_rcczo_pt: 4768006.21823093
 
 bgcsim_metdata:
-	bgcsim_metpath: '../biomebgc_run/metdata/'
-	bgcsim_metname: 'rcczo_rme.met'
+    bgcsim_metpath: '../biomebgc_run/metdata/'
+    bgcsim_metname: 'rcczo_rme.met'
 
-	
+bgcsoil:
+    persand: -9999.0
+    persilt: -9999.0
+    perclay: -9999.0
+    effdepth: -9999.0
+
+bgcsite:
+    bgcelev: -9999.0
+    bgclat: -9999.0
+
+bgcepc:
+    epcpath: 'foo'
+    epcname: 'bar'
