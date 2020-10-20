@@ -32,5 +32,5 @@ bgcsite:
     bgclat: -9999.0
 
 bgcepc:
-    epcpath: 'foo'
-    epcname: 'bar'
+    epcpath: 'epc/'
+    epcname: 'shrub.epc'
